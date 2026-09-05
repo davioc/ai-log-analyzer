@@ -1,5 +1,5 @@
 import pytest
-from log_parser import parse_log_line, analyze_logs, generate_sample_logs
+from src.log_parser import parse_log_line, analyze_logs, generate_sample_logs
 
 def test_parse_valid_log_line():
     raw_line = "2026-09-01 12:00:00 [INFO] 200 45ms - GET /api/v1/health"
