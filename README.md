@@ -16,27 +16,29 @@
 
 The system processes incoming log streams through a 4-stage pipeline before rendering real-time HTML fragments via HTMX:
 
+```text
 [ Raw Logs / Form Payload ]
-│
-▼
+            │
+            ▼
 ┌──────────────────────────┐
-│ Stage 1: Extraction      │  FastAPI Router & HTMX Form Unwrapper
-└──────────┬───────────────┘
-│
-▼
+│  Stage 1: Extraction     │  FastAPI Router & HTMX Form Unwrapper
+└───────────┬──────────────┘
+            │
+            ▼
 ┌──────────────────────────┐
-│ Stage 2: Parsing Engine  │  Pre-compiled RegEx & ISO-8601 Extractor
-└──────────┬───────────────┘
-│
-▼
+│  Stage 2: Parsing Engine │  Pre-compiled RegEx & ISO-8601 Extractor
+└───────────┬──────────────┘
+            │
+            ▼
 ┌──────────────────────────┐  TRIAGE_MODE Routing:
-│ Stage 3: LLM Analysis    │ ├── mock   → Heuristic / Regex Fallback
-└──────────┬───────────────┘ ├── ollama → Local Llama 3.2 (Offline)
-│                 └── openai → GPT-4o Tool-Calling
-▼
+│  Stage 3: LLM Analysis   │  ├── mock   -> Heuristic / Regex Fallback
+└───────────┬──────────────┘  ├── ollama -> Local Llama 3.2 (Offline)
+            │                 └── openai -> GPT-4o Tool-Calling
+            ▼
 ┌──────────────────────────┐
-│ Stage 4: UI Rendering    │  Pydantic Schema Validation & HTMX Fragment Swap
+│  Stage 4: UI Rendering   │  Pydantic Schema Validation & HTMX Fragment Swap
 └──────────────────────────┘
+```
 
 ---
 
