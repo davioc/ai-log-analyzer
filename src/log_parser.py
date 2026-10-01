@@ -4,8 +4,13 @@ import re
 import time
 from typing import TypedDict
 
+# Support both traditional logs and key-value/ISO 8601 formatted logs
 LOG_PATTERN = re.compile(
-    r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \[(\w+)\] (\d{3}) (\d+ms) - (.*)$"
+    r"^(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+Z)?)\s+"
+    r"\[(\w+)\]\s+"
+    r"(?:status=)?(\d{3})\s+"
+    r"(?:latency=)?(\d+)ms\s+"
+    r"(?:msg=|\-\s+)?(.*)$"
 )
 
 
@@ -32,17 +37,21 @@ class LogAnalysis(TypedDict):
 
 
 def parse_log_line(line: str) -> LogEntry | None:
-    match = LOG_PATTERN.match(line)
+    match = LOG_PATTERN.match(line.strip())
     if not match:
         return None
 
     timestamp, log_level, status_code, latency, message = match.groups()
+    
+    # Strip quotes if msg="..." key-value format was used
+    clean_msg = message.strip('"\'')
+
     return {
         "timestamp": timestamp,
         "level": log_level,
         "status": int(status_code),
-        "latency_ms": int(latency[:-2]),
-        "message": message,
+        "latency_ms": int(latency),
+        "message": clean_msg,
     }
 
 

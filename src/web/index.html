@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRE Incident Triage Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- HTMX CDN -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- HTMX JSON Enc extension to post form data as JSON -->
+    <script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/json-enc.js"></script>
+</head>
+<body class="h-full flex flex-col font-sans antialiased" hx-ext="json-enc">
+
+    <!-- Top Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+            <h1 class="text-xl font-bold tracking-light text-white">SRE Log Triage & Incident Engine</h1>
+        </div>
+        <div class="flex items-center space-x-4 text-xs text-slate-400">
+            <span>Target: <code class="text-sky-400">/api/v1/triage</code></span>
+            <span class="inlign-block w-px h-4 bg-slate-800"></span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">v1.0.0</span>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden">
+
+        <!-- Left Column: Log Input Controls (5 cols) -->
+        <section class="lg:col-span-5 flex flex-col bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Raw Telemetry Ingestion</h2>
+                <button type="button"
+                    onclick="loadSampleLogs()"
+                    class="text-xs text-sky-400 hover:text-sky-300 uppercase transition-colors">
+                + Load Sample Error Burst
+                </button>
+            </div>
+
+            <form hx-post="/api/v1/triage"
+                  hx-ext="json-enc"
+                  hx-target="#triage-results"
+                  hx-indicators="#loading-spinner"
+                  class="flex-1 flex flex-col space-y-4">
+                
+                <div class="flex-1 flex flex-col">
+                    <label for="raw_logs" class="sr-only">Raw Log Payload</label>
+                    <textarea id="raw_logs"
+                              name="raw_logs"
+                              required
+                              minlength="10"
+                              placeholder="Place unstructured log lines here..."
+                              class="w-full flex-1 min-h-[350px] p-4 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none leading-relaxed"></textarea>
+                </div>              
+            
+                <div class="flex items-center space-x-3 pt-2">
+                    <button type="submit"
+                            class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-medium text-sm py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-lg shadow-sky-600/20">
+                        <span>Analyze & Triage Payload</span>
+                    </button>
+                    <button type="button"
+                            onclick="document.getElementById('raw_logs').value=''"
+                            class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors">
+                    Clear
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Right Column: Incident Analysis Dashboard (7 Cols) -->
+        <section class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-2xl flex flex-col overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Triage Analysis & Metrics</h2>
+
+                <!-- HTMX Loading Indicator -->
+                <div id="Loading-spinner" class="htmx-indicator flex items-center space-x-2 text-sky-400 text-xs">
+                    <svg class="animate-spin h-4 w-4 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Processing logs with LLM...</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Results Target Area -->
+            <div id="triage-results" class="flex-1 flex flex-col justify-center items-center text-center p-8 border-2 border-dashed border-slate-800 rounded-lg bg-slate-950/50">
+                <svg class="w-12 h-12 text-slate-700 mb-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <p class="text-slate-400 text-sm font-medium">No Triage Report Generated</p>
+                <p class="text-slate-600 text-sm mt-1 max-w-sm">Paste raw telemetry logs into the left pane and submit to run the ingestion pipeline.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Helper JS for loading sample telemetry logs 
+        Format:
+        "timestamp": "2026-09-01 12:00:00",
+        "level": "INFO",
+        "status": 200,
+        "latency_ms": 45,
+        "message": "GET /api/v1/health" 
+
+            `timestamp="2026-09-22T21:14:02.102Z" level="[ERROR]" status=500 latency=482ms msg="Database Connection Timeout on pool acquisition"`;
+            2026-09-22T21:14:02.115Z [ERROR] status=503 latency=120ms msg="Redis cluster unreachable host=10.0.4.12"
+            2026-09-22T21:14:02.150Z [WARN]  status=429 latency=15ms  msg="Rate limiter triggered user_id=89231"
+            2026-09-22T21:14:02.210Z [ERROR] status=500 latency=850ms msg="Failed to render template user_dashboard"
+            2026-09-22T21:14:02.301Z [INFO]  status=200 latency=42ms  msg="GET /api/v1/health operational"
+    -->
+    <script>
+        function loadSampleLogs() {
+            const sampleLogs = 
+           `2026-09-22T21:14:02.102Z [ERROR] status=500 latency=482ms msg="Database Connection Timeout on pool acquisition"
+            2026-09-22T21:14:02.115Z [ERROR] status=503 latency=120ms msg="Redis cluster unreachable host=10.0.4.12"
+            2026-09-22T21:14:02.150Z [WARN]  status=429 latency=15ms  msg="Rate limiter triggered user_id=89231"
+            2026-09-22T21:14:02.210Z [ERROR] status=500 latency=850ms msg="Failed to render template user_dashboard"
+            2026-09-22T21:14:02.301Z [INFO]  status=200 latency=42ms  msg="GET /api/v1/health operational"`
+            
+            document.getElementById('raw_logs').value = sampleLogs;
+        }
+    </script>
+</body>
+</html>
