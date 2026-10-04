@@ -18,3 +18,12 @@ __pycache__/
 .vscode/
 .idea/
 .cursor/
+
+# Vector Store / Local Database
+.chroma_db
+
+# Node / Frontend Build Tools (if applicable)
+node_modules/
+.npm/
+dist/
+build/

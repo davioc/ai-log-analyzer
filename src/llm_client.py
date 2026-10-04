@@ -7,7 +7,7 @@ import json
 import os
 import random
 from typing import Optional
-from pydantic import ValidationError
+#from pydantic import ValidationError
 from openai import OpenAI
 from src.schema import IncidentReport
 

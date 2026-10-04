@@ -2,7 +2,7 @@ import json
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from typing import Optional
-from src.schema import IncidentReport
+#from src.schema import IncidentReport
 from src.engine import IncidentTriageEngine
 
 router = APIRouter()

@@ -63,11 +63,102 @@ Refactored using AI-assisted workflows (Cursor) to eliminate $O(N^2)$ search pat
 
 ## 🧪 Testing & Local Execution
 
-### 1. Set Up Environment
-```bash
-# Activate virtual environment
-.\.venv\Scripts\Activate.ps1   # Windows PowerShell
-source .venv/bin/activate      # Linux/macOS
+The project can be run locally with Python; Local execution is the simplest option for development because the default `mock` triage mode works
+without an API key or a separate model server.
 
-# Install dependencies
-pip install -r requirements.txt
+### 1. Install Python
+
+Install Python 3.11 or newer and verify that it is available:
+
+```bash
+python --version
+```
+
+On Windows, use `py --version` if the `python` command is not available.
+
+### 2. Create a virtual environment
+
+Run these commands from the repository root:
+
+**Windows PowerShell**
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+**Linux/macOS**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+If PowerShell blocks activation, either use the direct Python path shown below or
+allow scripts for the current user:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+### 3. Install dependencies
+
+With the virtual environment activated, install the pinned dependencies:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Using `python -m pip` ensures that packages are installed into the same Python
+environment used to run the application. On Windows, the commands can also be run
+without activation:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+### 4. Run the API and dashboard
+
+Start the development server:
+
+```bash
+python -m uvicorn src.main:app --reload
+```
+
+Then open <http://127.0.0.1:8000> in a browser. The application provides:
+
+- Dashboard: <http://127.0.0.1:8000>
+- Health check: <http://127.0.0.1:8000/api/v1/health>
+- Interactive API documentation: <http://127.0.0.1:8000/docs>
+- Triage endpoint: `POST /api/v1/triage`
+
+The default `TRIAGE_MODE` is `mock`, so the dashboard can analyze logs immediately
+using the local heuristic analyzer.
+
+### 5. Run the command-line demo
+
+In a second terminal, activate the same virtual environment and run:
+
+```bash
+python run_triage.py
+```
+
+### 6. Run the tests
+
+```bash
+python -m pytest
+```
+
+### Optional: configure an LLM provider
+
+Copy or edit the root `.env` file and set one of the supported modes:
+
+```dotenv
+TRIAGE_MODE=mock
+```
+
+For OpenAI, set `TRIAGE_MODE=openai` and provide `OPENAI_API_KEY`. For Ollama, set
+`TRIAGE_MODE=ollama`, start Ollama locally, and optionally set `OLLAMA_MODEL` and
+`OLLAMA_BASE_URL`. The application falls back to local mock analysis if an external
+LLM request fails.

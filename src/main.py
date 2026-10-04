@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
+
 # Read .env from root directory and populate os.environ
 load_dotenv()
 
