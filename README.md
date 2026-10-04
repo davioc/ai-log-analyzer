@@ -63,8 +63,7 @@ Refactored using AI-assisted workflows (Cursor) to eliminate $O(N^2)$ search pat
 
 ## 🧪 Testing & Local Execution
 
-The project can be run locally with Python; Local execution is the simplest option for development because the default `mock` triage mode works
-without an API key or a separate model server.
+This project can be run locally with Python.
 
 ### 1. Install Python
 
