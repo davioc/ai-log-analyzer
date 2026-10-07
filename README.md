@@ -1,6 +1,6 @@
 # 🛠️ AI Log Analyzer & Triage Engine
 
-> **Status:** Active Development (Week 3 of 12 — AI-Augmented Velocity)  
+> **Status:** Active - In Progress  
 > A modular, high-performance SRE incident triage pipeline and dashboard built with **FastAPI**, **HTMX**, **Tailwind CSS**, and **Pydantic**.
 
 ---
@@ -39,17 +39,6 @@ The system processes incoming log streams through a 4-stage pipeline before rend
 │  Stage 4: UI Rendering   │  Pydantic Schema Validation & HTMX Fragment Swap
 └──────────────────────────┘
 ```
-
----
-
-## 🚀 Performance Benchmarks
-
-Refactored using AI-assisted workflows (Cursor) to eliminate $O(N^2)$ search patterns and inline RegEx compilation:
-
-| Metric | Baseline (Legacy) | Refactored | Improvement |
-| :--- | :--- | :--- | :--- |
-| **50,000 Logs Processing** | 57.93s | 0.11s | **~496x Faster** |
-| **Throughput (Ops/Sec)** | ~38 ops/sec | ~523 ops/sec | **13.6x Increase** |
 
 ---
 
